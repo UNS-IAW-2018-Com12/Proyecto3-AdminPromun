@@ -20,8 +20,6 @@ Route::get('/login', function () {
     return view('index');
 });
 
-Route::post('/login', 'Auth\LoginController@login');
-
 Route::post('login', [ 'as' => 'login', 'uses' => 'Auth\LoginController@login']);
 
 Route::get('/logout', 'Auth\LoginController@logout')->middleware('auth');
