@@ -28,6 +28,10 @@
                       <img src="./images/banderas/{{$partido['equipo1']}}.png" class="border" />
                       <br>
                       <a class="equipo">{{$partido['equipo1']}}</a>
+                      @if($partido['jugado'] == true)
+                        <br>
+                        <a>{{$partido['golesEquipo1']}}</a>
+                      @endif
                     </div>
                     <div class="col-1 align-self-center">
                     </div>
@@ -40,6 +44,10 @@
                       <img src="./images/banderas/{{$partido['equipo2']}}.png" class="border" />
                       <br>
                       <a class="equipo">{{$partido['equipo2']}}</a>
+                      @if($partido['jugado'] == true)
+                        <br>
+                        <a>{{$partido['golesEquipo2']}}</a>
+                      @endif
                     </div>
                   </div>
                   <div class="row">

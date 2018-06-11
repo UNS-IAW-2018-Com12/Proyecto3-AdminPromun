@@ -1,4 +1,5 @@
 function cerrarPartidoPlayoff(idPartido) {
+    location.reload();
     $.ajax({
       url: "/api/cerrarPartidoPlayoff",
       type: 'post',
@@ -9,13 +10,12 @@ function cerrarPartidoPlayoff(idPartido) {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       dataType: 'json',
-      success: function (data) {
-
-      }
+      function() {}
     });
 }
 
 function cerrarPartidoGrupo(idGrupo, idPartido, button) {
+    location.reload();
     $.ajax({
       url: "/api/cerrarPartidoGrupo",
       type: 'post',
@@ -27,45 +27,39 @@ function cerrarPartidoGrupo(idGrupo, idPartido, button) {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       dataType: 'json',
-      success: function(button) {
-        $(button).closest('li').addClass('bg-danger');
-        var idCollapse = $(button).closest('li').find('.collapse').attr('id');
-        $(button)
-        .removeAttr('onclick')
-        .attr('data-toggle', 'collapse')
-        .attr('data-target', '#' + idCollapse)
-        .text("Cargar resultado");
-      }
+      success: function() {}
     });
 }
 
 function cargarResultadoPlayoff(button) {
+    location.reload();
     var equipos = $(button).closest('li').find('.equipo');
     var equipo1 = equipos.eq(0).text();
     var equipo2 = equipos.eq(1).text();
     var inputs = $(button).closest('form').find('select');
     var golesEquipo1 = parseInt(inputs.eq(0).val());
     var golesEquipo2 = parseInt(inputs.eq(1).val());
-    $.ajax({
-      url: "/api/cargarResultadoPlayoff",
-      type: 'post',
-      data: {
-        "equipo1": equipo1,
-        "equipo2": equipo2,
-        "golesEquipo1": golesEquipo1,
-        "golesEquipo2": golesEquipo2
-      },
-      headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      dataType: 'json',
-      success: function (data) {
-
-      }
-    });
+    if(golesEquipo1 != golesEquipo2) { 
+      $.ajax({
+        url: "/api/cargarResultadoPlayoff",
+        type: 'post',
+        data: {
+          "equipo1": equipo1,
+          "equipo2": equipo2,
+          "golesEquipo1": golesEquipo1,
+          "golesEquipo2": golesEquipo2
+        },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        dataType: 'json',
+        success: function() {}
+      });
+    }
 }
 
 function cargarResultadoGrupo(idGrupo, idPartido, button) {
+    location.reload();
     var inputs = $(button).closest('form').find('select');
     var golesEquipo1 = parseInt(inputs.eq(0).val());
     var golesEquipo2 = parseInt(inputs.eq(1).val());
@@ -82,8 +76,6 @@ function cargarResultadoGrupo(idGrupo, idPartido, button) {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       dataType: 'json',
-      success: function (data) {
-
-      }
+      success: function() {}
     });
 }

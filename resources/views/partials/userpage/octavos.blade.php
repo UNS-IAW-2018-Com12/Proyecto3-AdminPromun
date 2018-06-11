@@ -11,6 +11,10 @@
                   <img src="./images/banderas/{{$partido->equipo1}}.png" class="border" />
                   <br>
                   <a class="equipo">{{$partido->equipo1}}</a>
+                  @if($partido->jugado == true)
+                    <br>
+                    <a>{{$partido->golesEquipo1}}</a>
+                  @endif
                 @else
                   <img src="./images/banderas/banderaneutra.png" class="border" />
                 @endif
@@ -32,6 +36,10 @@
                   <img src="./images/banderas/{{$partido->equipo2}}.png" class="border" />
                   <br>
                   <a class="equipo">{{$partido->equipo2}}</a>
+                  @if($partido->jugado == true)
+                    <br>
+                    <a>{{$partido->golesEquipo2}}</a>
+                  @endif
                 @else
                   <img src="./images/banderas/banderaneutra.png" class="border" />
                 @endif
@@ -40,12 +48,16 @@
             </div>
             <div class="row">
               <div class="col text-center">
-                @if($partido->creado == true & $partido->cerrado == false)
-                  <button type="button" class="btn btn-primary my-3" data-target="#resultado{{ $loop->index }}" onclick="cerrarPartidoPlayoff('{{$partido->id}}')">Cerrar Partido</button>
-                @else
-                  @if($partido->cerrado == true)
-                    <button type="button" class="btn btn-primary my-3" data-toggle="collapse" data-target="#resultado{{ $loop->index }}">Ingresar Resultado</button>
+                @if($partido->jugado == false)
+                  @if($partido->creado == true & $partido->cerrado == false)
+                    <button type="button" class="btn btn-primary my-3" data-target="#resultado{{ $loop->index }}" onclick="cerrarPartidoPlayoff('{{$partido->id}}')">Cerrar Partido</button>
+                  @else
+                    @if($partido->cerrado == true)
+                      <button type="button" class="btn btn-primary my-3" data-toggle="collapse" data-target="#resultado{{ $loop->index }}">Ingresar Resultado</button>
+                    @endif
                   @endif
+                @else
+                  <a class="equipo">Partido Jugado</a>
                 @endif
             </div>
           </div>

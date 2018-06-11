@@ -23,6 +23,8 @@ class ApiController extends Controller {
       $partidoSeleccionado = Grupo::find($idGrupo)->partidos->where('_id', '=', $idPartido)->first();
       $partidoSeleccionado->cerrado = true;
       $partidoSeleccionado->save();
+
+      return 'Hola en el controller';
   }
 
   public function cerrarPartidoPlayoff(Request $idPartido) {
@@ -53,10 +55,10 @@ class ApiController extends Controller {
   public function cargarResultadoPlayoff(Request $request) {
 
       //Actualiza el partido jugados
-      //self::actualizarPartidoPlayoff($request);
+      self::actualizarPartidoPlayoff($request);
 
       //Asigna el equipo ganador a la fase correspondiente
-      //self::actualizarFasePlayoff($request);
+      self::actualizarFasePlayoff($request);
 
       //Actualiza el puntaje (estrellas) de los usuarios que hayan pronosticado acerca del partido
       self::actualizarPuntajesDeUsuariosPartidoPlayoff($request);
