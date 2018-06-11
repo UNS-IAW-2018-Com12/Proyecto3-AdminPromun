@@ -1,0 +1,18 @@
+body {
+  padding-top: 6em; }
+
+.navbar-dark .navbar-brand {
+  color: #00bc8c !important;
+  font-weight: bold; }
+
+footer {
+  color: white;
+  padding: 1em 0; }
+  footer p {
+    margin: 0;
+    font-style: italic; }
+  footer .img-logo {
+    height: 4em;
+    width: 3em; }
+
+/*# sourceMappingURL=style.css.map */
