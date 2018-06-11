@@ -14,7 +14,7 @@
 Auth::routes();
 
 Route::get('/', function () {
-    return view('login', [ 'title' => 'Admin Login']);
+    return view('index', [ 'title' => 'Admin Login']);
 });
 
 Route::post('/login', 'Auth\LoginController@login');
