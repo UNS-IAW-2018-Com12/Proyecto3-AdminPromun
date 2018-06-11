@@ -8,7 +8,6 @@
 
     <title>"{{ $title }}"</title>
 
-    <base href="{{ URL::asset('/') }}" target="_blank">
     <link rel="stylesheet" href="{{ url('stylesheets\bootstrap-darkly.css') }}">
 
   </head>
