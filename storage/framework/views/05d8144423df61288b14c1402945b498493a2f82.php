@@ -14,7 +14,7 @@
 
         <meta name="csrf-token" id="token" content="<?php echo e(csrf_token()); ?>">
 
-        <title><?php echo e($title); ?></title>
+        <title>Ventana Administrador</title>
 
 
         <base href="<?php echo e(URL::asset('/')); ?>" target="_blank">

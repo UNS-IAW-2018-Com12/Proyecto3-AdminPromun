@@ -6,9 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>"<?php echo e($title); ?>"</title>
+    <title>Acceso Administrador</title>
 
-    <base href="<?php echo e(URL::asset('/')); ?>" target="_blank">
     <link rel="stylesheet" href="<?php echo e(url('stylesheets\bootstrap-darkly.css')); ?>">
 
   </head>
