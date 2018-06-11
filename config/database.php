@@ -35,11 +35,11 @@ return [
 
         'mongodb' => [
             'driver'   => 'mongodb',
-            'host'     => env('MONGO_HOST'),
-            'port'     => env('MONGO_PORT'),
-            'database' => env('MONGO_DATABASE'),
-            'username' => env('MONGO_USERNAME'),
-            'password' => env('MONGO_PASSWORD'),
+            'host'     => "ds117749.mlab.com:17749/promundata",
+            'port'     => "17749",
+            'database' => "promundata",
+            'username' => "promun",
+            'password' => "promun",
 
         ],
     ],

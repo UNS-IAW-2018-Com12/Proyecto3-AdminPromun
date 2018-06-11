@@ -162,8 +162,6 @@ return [
 
         // MongoDB service provider
         Jenssegers\Mongodb\MongodbServiceProvider::class,
-        // Twig service provider
-        TwigBridge\ServiceProvider::class,
     ],
 
     /*
