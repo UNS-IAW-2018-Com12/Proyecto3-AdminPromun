@@ -14,7 +14,7 @@
 
         <meta name="csrf-token" id="token" content="{{ csrf_token() }}">
 
-        <title>{{ $title }}</title>
+        <title>Ventana Administrador</title>
 
 
         <base href="{{ URL::asset('/') }}" target="_blank">
