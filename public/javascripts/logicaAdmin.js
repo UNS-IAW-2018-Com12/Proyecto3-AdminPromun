@@ -39,7 +39,7 @@ function cargarResultadoPlayoff(button) {
     var inputs = $(button).closest('form').find('select');
     var golesEquipo1 = parseInt(inputs.eq(0).val());
     var golesEquipo2 = parseInt(inputs.eq(1).val());
-    if(golesEquipo1 != golesEquipo2) { 
+    if(golesEquipo1 != golesEquipo2) {
       $.ajax({
         url: "/api/cargarResultadoPlayoff",
         type: 'post',

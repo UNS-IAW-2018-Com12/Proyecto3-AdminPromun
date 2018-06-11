@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\User;
 
 class LoginController extends Controller {
@@ -26,7 +27,8 @@ class LoginController extends Controller {
 
   public function login(Request $request) {
 
-    $this->validate($request, ['username' => 'required|max:255','password' => 'required|max:255']);
+
+    $this->validate($request, ["username" => 'required|max:255',"password" => 'required|max:255']);
 
     $authUser = User::where($this->username(), '=', $request->username)->get();
 

@@ -22,8 +22,6 @@ Route::get('/login', function () {
 
 Route::post('/login', [ 'as' => 'login', 'uses' => 'Auth\LoginController@login']);
 
-Route::get('/logout', 'Auth\LoginController@logout')->middleware('auth');
+Route::get('/logout', [ 'as' => 'logout', 'uses' => 'Auth\LoginController@logout'])->middleware('auth');
 
-Route::get('/admin', 'AdminController@admin')->middleware('auth');
-
-Route::get('/admin', 'AdminController@admin')->middleware('auth');
+Route::get('/admin', [ 'as' => 'admin', 'uses' => 'AdminController@admin'])->middleware('auth');
