@@ -2,7 +2,7 @@
 <div id="accordionCuartos">
   <ul class="list-group my-3">
     @foreach($partidosfasefinal as $partido)
-      @if ($partido->fase == 'octavos')
+      @if ($partido->fase == 'cuartos')
         <li class="list-group-item">
           <div class="container-fluid">
             <div class="row text-center">
