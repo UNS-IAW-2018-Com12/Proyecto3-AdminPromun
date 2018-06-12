@@ -38,13 +38,13 @@ class LoginController extends Controller {
           return redirect('/admin');
         }
         else {
-          return view('index');
+          return redirect('/');
         }
     }
   }
 
   public function logout() {
     Auth::logout();
-    return view('index');
+    return redirect('/');
   }
 }

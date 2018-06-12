@@ -1,5 +1,5 @@
 <footer class="bg-primary">
-  <div class="container">
+  <div>
     <div class="row text-center">
       <div class="col-12">
         <p>

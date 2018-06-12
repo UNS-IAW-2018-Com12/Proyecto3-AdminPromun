@@ -1,19 +1,26 @@
 body {
-  padding-top: 6em;
+  padding-top: 4em;
+
 }
 
+#loginForm {
+  padding-left: 30%;
+}
+
+#SignInButton {
+  padding-left: 22%;
+}
 .navbar-dark .navbar-brand {
   color: #00bc8c !important;
   font-weight: bold; }
 
 footer {
-  color: white;
   padding: 1em 0;
+  color: white;
+
 }
 
 footer p {
-  margin: 0;
+  margin: -0;
   font-style: italic;
 }
-
-/*# sourceMappingURL=style.css.map */
