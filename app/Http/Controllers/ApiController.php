@@ -24,7 +24,6 @@ class ApiController extends Controller {
       $partidoSeleccionado->cerrado = true;
       $partidoSeleccionado->save();
 
-      return 'Hola en el controller';
   }
 
   public function cerrarPartidoPlayoff(Request $idPartido) {
@@ -256,7 +255,6 @@ class ApiController extends Controller {
       $partidoSeleccionado->jugado = true;
       $partidoSeleccionado->save();
 
-      return $partidoSeleccionado;
   }
 
   protected function actualizarFasePlayoff(Request $request) {
@@ -609,26 +607,182 @@ class ApiController extends Controller {
         $segundoPuntaje = -1;
         foreach($equipos as $equipo) {
           $puntajeEquipoActual = $equipo->resultados_grupo['puntos'];
-          if( ($puntajeEquipoActual > $segundoPuntaje) & ($nombrePrimerEquipo != $equipo->nombre) ) {
-              $segundoPuntaje = $puntajeEquipoActual;
-              $nombreSegundoEquipo = $equipo->nombre;
+          if( $equipo->nombre != $nombrePrimerEquipo ) {
+            if( $puntajeEquipoActual > $segundoPuntaje ) {
+                $segundoPuntaje = $puntajeEquipoActual;
+                $nombreSegundoEquipo = $equipo->nombre;
+            }
           }
         }
 
-        //Si hay un tercero con los mismos puntos que el segundo
-        $segundoEquipo = $equipos->where('nombre', '=', $nombreSegundoEquipo)->first();
-        $difGolesSegundoEquipo = $segundoEquipo->resultados_grupo['dif'];
-        $tercerPuntaje = -1;
-        foreach($equipos as $equipo) {
-          $puntajeEquipoActual = $equipo->resultados_grupo['puntos'];
-          if( ($puntajeEquipoActual == $segundoPuntaje) & ($nombreSegundoEquipo != $equipo->nombre) ) {
-              $difGolesTercerEquipo = $equipo->resultados_grupo['dif'];
-              //se define por diferencia de goles
-              if( $difGolesTercerEquipo > $difGolesSegundoEquipo ) {
-                  $nombreSegundoEquipo = $equipo->nombre;
+
+
+        //Si los primeros dos equipos estan empatados en puntos busca si hay un tercero con los mismos puntos
+        (boolean) $tripleEmpate = false;
+        $nombreTercerEquipo = "";
+        if($primerPuntaje == $segundoPuntaje) {
+
+          foreach($equipos as $equipo) {
+            $puntajeEquipoActual = $equipo->resultados_grupo['puntos'];
+            if(( $puntajeEquipoActual == $segundoPuntaje ) & ($equipo->nombre != $nombrePrimerEquipo ) & ($equipo->nombre != $nombreSegundoEquipo ))  {
+
+              (boolean) $tripleEmpate = true;
+              $nombreTercerEquipo = $equipo->nombre;
+            }
+          }
+
+          //Busca si el cuarto equipo tiene los mismos puntos (empataron los cuatro)
+          (boolean) $cuadrupleEmpate = false;
+          $nombreCuartoEquipo = "";
+          if((boolean) $tripleEmpate) {
+
+            foreach($equipos as $equipo) {
+              $puntajeEquipoActual = $equipo->resultados_grupo['puntos'];
+              if(( $puntajeEquipoActual == $segundoPuntaje ) & ($equipo->nombre != $nombrePrimerEquipo ) & ($equipo->nombre != $nombreSegundoEquipo ) & ($equipo->nombre != $nombreTercerEquipo ))  {
+                (boolean) $cuadrupleEmpate = true;
+
+                $nombreCuartoEquipo = $equipo->nombre;
+              }
+            }
+
+            //Hubo cuadruple empate, define por diferencia de goles entre los 4
+            if((boolean) $cuadrupleEmpate) {
+
+              $mayorDif = -1000;
+              foreach($equipos as $equipo) {
+                $diferenciaActual = $equipo->resultados_grupo['dif'];
+                if($diferenciaActual > $mayorDif)  {
+                  $mayorDif = $diferenciaActual;
+                  $nombrePrimerEquipo = $equipo->nombre;
+                }
+              }
+
+              $mayorDif = -1000;
+              foreach($equipos as $equipo) {
+                if($equipo->nombre != $nombrePrimerEquipo) {
+                  $diferenciaActual = $equipo->resultados_grupo['dif'];
+                  if($diferenciaActual > $mayorDif)  {
+                    $mayorDif = $diferenciaActual;
+                    $nombreSegundoEquipo = $equipo->nombre;
+                  }
+                }
+              }
+          }
+          else {
+
+              //Hubo triple empate, se define entre esos 3 $equipos
+              $equipo1 = $equipos->where('nombre', '=', $nombrePrimerEquipo)->first();
+              $difGolesEquipo1 = $equipo1->resultados_grupo['dif'];
+
+              $equipo2 = $equipos->where('nombre', '=', $nombreSegundoEquipo)->first();
+              $difGolesEquipo2 = $equipo2->resultados_grupo['dif'];
+
+              $equipo3 = $equipos->where('nombre', '=', $nombreTercerEquipo)->first();
+              $difGolesEquipo3 = $equipo3->resultados_grupo['dif'];
+
+              //Si el mas grande es el primero, el segundo equipo se define entre el segundo y el tercero
+              if( ($difGolesEquipo1 > $difGolesEquipo2) & ($difGolesEquipo1 > $difGolesEquipo3) ) {
+                if($difGolesEquipo3 > $difGolesEquipo2) {
+                  $nombreSegundoEquipo = $nombreTercerEquipo;
+                }
+              }
+
+              //Si el mas grande es el segundo, el segundo se define entre el primero y el tercero
+              if( ($difGolesEquipo2 > $difGolesEquipo1) & ($difGolesEquipo2 > $difGolesEquipo3) ) {
+                $aux = $nombrePrimerEquipo;
+                $nombrePrimerEquipo = $nombreSegundoEquipo;
+                if($difGolesEquipo3 > $difGolesEquipo1) {
+                  $nombreSegundoEquipo = $nombreTercerEquipo;
+                }
+                else {
+                  $nombreSegundoEquipo = $aux;
+                }
+              }
+
+              //Si el mas grande es el tercero, el segundo se define entre el primero y el segundo
+              if( ($difGolesEquipo3 > $difGolesEquipo1) & ($difGolesEquipo3 > $difGolesEquipo2) ) {
+                $aux = $nombrePrimerEquipo;
+                $nombrePrimerEquipo = $nombreTercerEquipo;
+                if($difGolesEquipo1 > $difGolesEquipo2) {
+                  $nombreSegundoEquipo = $aux;
+                }
               }
           }
         }
+      }
+      else {
+
+          //No hubo triple empate con el primero, pero puede haber uno o dos equipos en disputa con el segundo
+
+          //Busca un equipo con los mismos puntos que el segundo
+          (boolean) $segundoEmpatado = false;
+          $nombreSegundoEmpatado = "";
+          foreach($equipos as $equipo) {
+            $puntajeEquipoActual = $equipo->resultados_grupo['puntos'];
+            if(( $puntajeEquipoActual == $segundoPuntaje ) & ( $equipo->nombre != $nombreSegundoEquipo ))  {
+              (boolean) $segundoEmpatado = true;
+              $nombreSegundoEmpatado = $equipo->nombre;
+            }
+          }
+
+          //Si hubo un segundo empatado busca si hay un tercero
+          if($segundoEmpatado) {
+
+              (boolean) $tercerEmpatado = false;
+              $nombreTercerEmpatado = "";
+              foreach($equipos as $equipo) {
+                $puntajeEquipoActual = $equipo->resultados_grupo['puntos'];
+                if(( $puntajeEquipoActual == $segundoPuntaje ) & ( $equipo->nombre != $nombreSegundoEquipo ) & (( $equipo->nombre != $nombreSegundoEmpatado )))  {
+                  (boolean) $tercerEmpatado = true;
+                  $nombreTercerEmpatado = $equipo->nombre;
+                }
+              }
+
+              //Si hubo un tercer empatado se define entre esos 3, sino entre los otros 2
+              if((boolean) $tercerEmpatado) {
+
+                  //Hubo triple empate, se define entre esos 3 $equipos
+                  $equipo2 = $equipos->where('nombre', '=', $nombreSegundoEquipo)->first();
+                  $difGolesequipo2  = $equipo2 ->resultados_grupo['dif'];
+
+                  $equipoEmpatado2 = $equipos->where('nombre', '=', $nombreSegundoEmpatado)->first();
+                  $difGolesEquipoEmpatado2 = $equipoEmpatado2->resultados_grupo['dif'];
+
+                  $equipoEmpatado3 = $equipos->where('nombre', '=', $nombreTercerEmpatado)->first();
+                  $difGolesEquipoEmpatado3 = $equipoEmpatado3->resultados_grupo['dif'];
+
+
+                  //Como $nombreSegundoEquipo ya esta asignado, el caso de que sea el mayor no se considera, por descarte
+
+                  //Si el mas grande es el segundoEmpatado, segundoEmpatado pasa a octavos como segundo equipo
+                  //Sino pasa el tercerEmpatado, si es mas grande que equipo2
+                  if( ($difGolesEquipoEmpatado2 > $difGolesequipo2) & ($difGolesEquipoEmpatado2 > $difGolesEquipoEmpatado3) ) {
+                      $nombreSegundoEquipo = $nombreSegundoEmpatado;
+                  }
+                  else {
+                      if($difGolesEquipoEmpatado3 > $difGolesequipo2) {
+                        $nombreSegundoEquipo = $nombreTercerEmpatado;
+                      }
+                  }
+
+            }
+            else {
+
+                //Se define entre el segundo equipo y el que lo empato
+                $equipo2 = $equipos->where('nombre', '=', $nombreSegundoEquipo)->first();
+                $difGolesequipo2  = $equipo2 ->resultados_grupo['dif'];
+
+                $equipoEmpatado2 = $equipos->where('nombre', '=', $nombreSegundoEmpatado)->first();
+                $difGolesEquipoEmpatado2 = $equipoEmpatado2->resultados_grupo['dif'];
+
+                if($difGolesEquipoEmpatado2 > $difGolesequipo2) {
+                  $nombreSegundoEquipo = $nombreSegundoEmpatado;
+                }
+          }
+        }
+      }
+
+
 
         //Asigna los equipos ganadores del grupo a los partidos de octavos que le corresponden a cada uno
         $letraGrupo = Grupo::find($idGrupo)->letra;
@@ -642,8 +796,8 @@ class ApiController extends Controller {
 
 
                 $octavosNro51 = Playoff::where("nro_partido", '=', 51)->first();
-                $octavosNro51->equipo1 = $nombreSegundoEquipo;
-                if($octavosNro51->equipo2 != '1B')
+                $octavosNro51->equipo2 = $nombreSegundoEquipo;
+                if($octavosNro51->equipo1 != '1B')
                     $octavosNro51->creado = true;
                 $octavosNro51->save();
 
@@ -651,8 +805,8 @@ class ApiController extends Controller {
             }
             case "B": {
                 $octavosNro51 = Playoff::where("nro_partido", '=', 51)->first();
-                $octavosNro51->equipo2 = $nombrePrimerEquipo;
-                if($octavosNro51->equipo1 != '2A')
+                $octavosNro51->equipo1 = $nombrePrimerEquipo;
+                if($octavosNro51->equipo2 != '2A')
                     $octavosNro51->creado = true;
                 $octavosNro51->save();
 
@@ -672,8 +826,8 @@ class ApiController extends Controller {
                 $octavosNro50->save();
 
                 $octavosNro52 = Playoff::where("nro_partido", '=', 52)->first();
-                $octavosNro52->equipo1 = $nombreSegundoEquipo;
-                if($octavosNro52->equipo2 != '1D')
+                $octavosNro52->equipo2 = $nombreSegundoEquipo;
+                if($octavosNro52->equipo1 != '1D')
                     $octavosNro52->creado = true;
                 $octavosNro52->save();
 
@@ -681,8 +835,8 @@ class ApiController extends Controller {
             }
             case "D": {
                 $octavosNro52 = Playoff::where("nro_partido", '=', 52)->first();
-                $octavosNro52->equipo2 = $nombrePrimerEquipo;
-                if($octavosNro52->equipo1 != '2C')
+                $octavosNro52->equipo1 = $nombrePrimerEquipo;
+                if($octavosNro52->equipo2 != '2C')
                     $octavosNro52->creado = true;
                 $octavosNro52->save();
 
@@ -702,8 +856,8 @@ class ApiController extends Controller {
                 $octavosNro53->save();
 
                 $octavosNro55 = Playoff::where("nro_partido", '=', 55)->first();
-                $octavosNro55->equipo1 = $nombreSegundoEquipo;
-                if($octavosNro55->equipo2 != '1F')
+                $octavosNro55->equipo2 = $nombreSegundoEquipo;
+                if($octavosNro55->equipo1 != '1F')
                     $octavosNro55->creado = true;
                 $octavosNro55->save();
 
@@ -711,8 +865,8 @@ class ApiController extends Controller {
             }
             case "F": {
                 $octavosNro55 = Playoff::where("nro_partido", '=', 55)->first();
-                $octavosNro55->equipo2 = $nombrePrimerEquipo;
-                if($octavosNro55->equipo1 != '2E')
+                $octavosNro55->equipo1 = $nombrePrimerEquipo;
+                if($octavosNro55->equipo2 != '2E')
                     $octavosNro55->creado = true;
                 $octavosNro55->save();
 
@@ -732,8 +886,8 @@ class ApiController extends Controller {
                 $octavosNro54->save();
 
                 $octavosNro56 = Playoff::where("nro_partido", '=', 56)->first();
-                $octavosNro56->equipo1 = $nombreSegundoEquipo;
-                if($octavosNro56->equipo2 != '1H')
+                $octavosNro56->equipo2 = $nombreSegundoEquipo;
+                if($octavosNro56->equipo1 != '1H')
                     $octavosNro56->creado = true;
                 $octavosNro56->save();
 
@@ -741,8 +895,8 @@ class ApiController extends Controller {
             }
             case "H": {
                 $octavosNro56 = Playoff::where("nro_partido", '=', 56)->first();
-                $octavosNro56->equipo2 = $nombrePrimerEquipo;
-                if($octavosNro56->equipo1 != '2G')
+                $octavosNro56->equipo1 = $nombrePrimerEquipo;
+                if($octavosNro56->equipo2 != '2G')
                     $octavosNro56->creado = true;
                 $octavosNro56->save();
 
